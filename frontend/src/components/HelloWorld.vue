@@ -1,44 +1,187 @@
 <script setup>
+import {onMounted, ref} from "vue"
+
+let commandsData = ref([
+  {
+    name: '->',
+    title: '3'
+  }
+])
+let showForm = ref(false)
+
+let command = ref({
+  number: '',
+  command_type: '',
+  transition: '',
+  comment: ''
+})
+
+let commandsType = [
+  {
+    value: 'right', name: '-> (Сдвиг вправо)'
+  },
+  {
+    value: 'left', name: '<- (Сдвиг влево)'
+  },
+  {
+    value: 'label', name: 'V (поставить метку)'
+  },
+  {
+    value: 'delete', name: 'X (удалить метку)'
+  },
+  {
+    value: 'transition', name: '? (переход)'
+  },
+  {
+    value: 'end', name: '! (конец)'
+  }
+]
+
 defineProps({
   msg: {
     type: String,
     required: true,
   },
 })
+
+onMounted(() => {
+  for (let i = 0; i < 20; i++) {
+    let mainBody = document.querySelector('.main-tape')
+    let inputField = document.createElement('input')
+    inputField.setAttribute('type', 'text')
+    inputField.setAttribute('maxlength', '1')
+    inputField.className = 'main-tape__input'
+    inputField.style.cssText = `
+      width: 50px;
+      height: 50px;
+      background-color: #2c3e50;
+      color: white;
+      border-radius: 6px;
+      padding-right: 5px;
+      padding-left: 20px;
+      font-size: 20px;
+    `
+    mainBody.append(inputField)
+  }
+})
+
+function createCommand() {
+  commandsData.push(command)
+}
+
 </script>
 
 <template>
-  <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You’ve successfully created a project with
-      <a href="https://vite.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
+  <div class="main">
+    <div class="main-title">
+      <h1>Реализация Машины Поста </h1>
+    </div>
+    <div class="main-tape">
+      <!--<input type="text" maxlength="1" class="main-tape__input">-->
+    </div>
+    <div class="main-commands">
+      <v-dialog max-width="500">
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn variant="outlined"
+                 class="main-commands__btn"
+                 v-bind="activatorProps"
+                 text="Добавить команду"
+                 @click="showForm=true"
+          ></v-btn>
+        </template>
+
+        <template v-slot:default="{ isActive }" class="main-commands__dialog">
+          <v-card title="Добавление команды">
+            <v-card-actions>
+              <v-select
+                  v-model="command.command_type"
+                  label="Команда"
+                  :items="commandsType"
+                  item-value="value"
+                  item-title="name"
+              ></v-select>
+              <v-text-field
+                v-model="command.transition"
+                :counter="10"
+                label="Переход"
+                required
+              ></v-text-field>
+              <v-text-field
+                v-model="command.comment"
+                :counter="30"
+                label="Комментарий"
+                required
+              ></v-text-field>
+              <div class="main-commands__dialog__btns">
+                <v-btn variant="outlined"
+                   text="Добавить"
+                   @click="createCommand"
+                   type="submit"
+                ></v-btn>
+                <v-btn variant="outlined"
+                   text="Закрыть"
+                   @click="isActive.value = false"
+                ></v-btn>
+              </div>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-dialog>
+
+      <v-table height="300px" class="main-commands__table">
+        <thead class="main-commands__table__headers">
+          <tr>
+            <th class="text-left">Номер</th>
+            <th class="text-left">Команда</th>
+            <th class="text-left">Переход</th>
+            <th class="text-left">Комментарий</th>
+          </tr>
+        </thead>
+        <tbody class="main-commands__table__body">
+          <tr
+              v-for="item in commandsData"
+              :key="item.name"
+              class="main-commands__table__body__tr"
+          >
+            <td>{{ item.number }}</td>
+            <td>{{ item.command_type }}</td>
+            <td>{{ item.transition }}</td>
+            <td>{{ item.comment }}</td>
+          </tr>
+        </tbody>
+      </v-table>
+    </div>
   </div>
 </template>
 
 <style scoped>
-h1 {
-  font-weight: 500;
-  font-size: 2.6rem;
-  position: relative;
-  top: -10px;
+/*.main-tape__input {
+  width: 50px;
+  height: 50px;
+  background-color: #2c3e50;
+  color: white;
+  border-radius: 6px;
+  padding-right: 5px;
+  padding-left: 5px;
+  font-size: 20px;
+}*/
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
-h3 {
-  font-size: 1.2rem;
+.main-tape {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
 }
-
-.greetings h1,
-.greetings h3 {
-  text-align: center;
+.v-card-actions {
+  display: inline;
 }
-
-@media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
-    text-align: left;
-  }
+.main-commands__dialog__btns {
+  display: flex;
+  gap: 16px;
 }
 </style>
