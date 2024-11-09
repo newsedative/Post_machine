@@ -1,22 +1,17 @@
 <script setup>
 import {onMounted, ref} from "vue"
 
-let commandsData = ref([
-  {
-    name: '->',
-    title: '3'
-  }
-])
+const commandsData = ref([])
 let showForm = ref(false)
-
-let command = ref({
+let commandNumber = ref(1)
+let command = {
   number: '',
   command_type: '',
   transition: '',
   comment: ''
-})
+}
 
-let commandsType = [
+const commandsType = [
   {
     value: 'right', name: '-> (Сдвиг вправо)'
   },
@@ -66,7 +61,9 @@ onMounted(() => {
 })
 
 function createCommand() {
-  commandsData.push(command)
+  command.number = commandNumber.value
+  commandsData.value.push(command)
+  commandNumber.value += 1
 }
 
 </script>
@@ -140,7 +137,6 @@ function createCommand() {
         <tbody class="main-commands__table__body">
           <tr
               v-for="item in commandsData"
-              :key="item.name"
               class="main-commands__table__body__tr"
           >
             <td>{{ item.number }}</td>
