@@ -4,12 +4,12 @@ import {onMounted, ref} from "vue"
 const commandsData = ref([])
 let showForm = ref(false)
 let commandNumber = ref(1)
-let command = {
+let command = ref({
   number: '',
   command_type: '',
   transition: '',
   comment: ''
-}
+})
 
 const commandsType = [
   {
@@ -61,9 +61,21 @@ onMounted(() => {
 })
 
 function createCommand() {
-  command.number = commandNumber.value
-  commandsData.value.push(command)
+  command.value.number = commandNumber.value
+  let newCommand = command.value
+  for (let elem of commandsType) {
+    if (elem.value === command.value.command_type) {
+      newCommand.command_type = elem.name
+    }
+  }
+  commandsData.value.push(newCommand)
   commandNumber.value += 1
+  command.value = {
+    number: '',
+    command_type: '',
+    transition: '',
+    comment: ''
+  }
 }
 
 </script>
