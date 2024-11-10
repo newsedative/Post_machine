@@ -33,7 +33,7 @@ const commandsType = [
   }
 ]
 
-let inputStyle = `
+const inputStyle = `
 width: 50px;
 height: 50px;
 background-color: #2c3e50;
@@ -42,7 +42,8 @@ border-radius: 6px;
 padding-right: 5px;
 padding-left: 20px;
 font-size: 20px;`
-let inputStyleСarriage = `
+
+const inputStyleCarriage = `
 width: 50px;
 height: 50px;
 background-color: red;
@@ -65,7 +66,7 @@ onMounted(() => {
   }
   let carriage = document.querySelector(`.main-tape__input[data-index="${9}"]`)
   carriage.classList.add('carriage')
-  carriage.style.cssText = inputStyleСarriage
+  carriage.style.cssText = inputStyleCarriage
 })
 
 function createCommand() {
@@ -92,7 +93,7 @@ function changeCarriage(indexBlock, pastBlock) {
   pastBlock.style.cssText = inputStyle
   let carriageNext = document.querySelector(`.main-tape__input[data-index="${indexBlock}"]`)
   carriageNext.classList.add('carriage')
-  carriageNext.style.cssText = inputStyleСarriage
+  carriageNext.style.cssText = inputStyleCarriage
 }
 function rightStep(curStep, curBlock, indexBlock) {
   changeCarriage(Number(indexBlock) + 1, curBlock)
@@ -109,11 +110,18 @@ function labelStep(curStep, curBlock) {
   return curStep.transition
 }
 function deleteStep(curStep, curBlock) {
-  curBlock.value = ' '
+  curBlock.value = ''
   return curStep.transition
 }
-function conditionStep() {
-  return 1
+function conditionStep(curStep, curBlock) {
+  const numbers = curStep.transition.split('; ');
+  const firstNumber = parseInt(numbers[0]);
+  const secondNumber = parseInt(numbers[1]);
+  if (curBlock.value === 'v') {
+    return secondNumber
+  } else {
+    return firstNumber
+  }
 }
 function endStep() {
   return 1
@@ -124,11 +132,13 @@ function startMachine() {
   let currentBlock = ''
   let blockIndex = 0
   let currentStep = 1
-  let currentCommand = commandsData.value[currentStep]
-  let commandType = currentCommand.command_value
+  let currentCommand = ''
+  let commandType = ''
   while (flag) {
     currentBlock = document.querySelector(`.carriage`)
+    currentCommand = commandsData.value[currentStep]
     blockIndex = currentBlock.dataset.index
+    commandType = currentCommand.command_value
     if (commandType === 'right') {
       currentStep = rightStep(currentCommand, currentBlock, blockIndex)
     } else if (commandType === 'left') {
@@ -138,13 +148,13 @@ function startMachine() {
     } else if (commandType === 'delete') {
       currentStep = deleteStep(currentCommand, currentBlock)
     } else if (commandType === 'condition') {
-      currentStep = conditionStep()
+      currentStep = conditionStep(currentCommand, currentBlock)
     } else if (commandType === 'end') {
       flag = false
     } else {
       flag = false
     }
-    flag = false
+    currentStep = Number(currentStep)
   }
 }
 
