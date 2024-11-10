@@ -162,6 +162,9 @@ async function startMachine() {
 </script>
 
 <template>
+  <div>
+    Developed by Dasha Mashinova
+  </div>
   <div class="main">
     <div class="main-title">
       <h1>Реализация Машины Поста </h1>
