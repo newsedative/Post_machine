@@ -127,7 +127,7 @@ function endStep() {
   return 1
 }
 
-function startMachine() {
+async function startMachine() {
   let flag = true
   let currentBlock = ''
   let blockIndex = 0
@@ -155,6 +155,7 @@ function startMachine() {
       flag = false
     }
     currentStep = Number(currentStep)
+    await new Promise(resolve => setTimeout(resolve, 1000))
   }
 }
 
