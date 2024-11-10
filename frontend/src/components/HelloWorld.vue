@@ -104,11 +104,13 @@ function leftStep(curStep, curBlock, indexBlock) {
   return curStep.transition
 }
 
-function labelStep() {
-  return 1
+function labelStep(curStep, curBlock) {
+  curBlock.value = 'v'
+  return curStep.transition
 }
-function deleteStep() {
-  return 1
+function deleteStep(curStep, curBlock) {
+  curBlock.value = ' '
+  return curStep.transition
 }
 function conditionStep() {
   return 1
@@ -132,9 +134,9 @@ function startMachine() {
     } else if (commandType === 'left') {
       currentStep = leftStep(currentCommand, currentBlock, blockIndex)
     } else if (commandType === 'label') {
-      currentStep = labelStep()
+      currentStep = labelStep(currentCommand, currentBlock)
     } else if (commandType === 'delete') {
-      currentStep = deleteStep()
+      currentStep = deleteStep(currentCommand, currentBlock)
     } else if (commandType === 'condition') {
       currentStep = conditionStep()
     } else if (commandType === 'end') {
