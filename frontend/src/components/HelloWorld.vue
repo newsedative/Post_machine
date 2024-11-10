@@ -91,12 +91,19 @@ function createCommand() {
     <div class="main-commands">
       <v-dialog max-width="500">
         <template v-slot:activator="{ props: activatorProps }">
-          <v-btn variant="outlined"
-                 class="main-commands__btn"
-                 v-bind="activatorProps"
-                 text="Добавить команду"
-                 @click="showForm=true"
-          ></v-btn>
+          <div class="main-commands__btns">
+            <v-btn variant="outlined"
+                   class="main-commands__btn"
+                   v-bind="activatorProps"
+                   text="Добавить команду"
+                   @click="showForm=true"
+            ></v-btn>
+            <v-btn variant="outlined"
+              class="main-commands__btn"
+              text="Старт"
+              @click="showForm=true"
+            ></v-btn>
+          </div>
         </template>
 
         <template v-slot:default="{ isActive }" class="main-commands__dialog">
@@ -187,6 +194,10 @@ function createCommand() {
 }
 .v-card-actions {
   display: inline;
+}
+.main-commands__btns {
+  display: flex;
+  gap: 16px;
 }
 .main-commands__dialog__btns {
   display: flex;
