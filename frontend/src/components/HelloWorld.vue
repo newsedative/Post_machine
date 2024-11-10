@@ -1,12 +1,13 @@
 <script setup>
 import {onMounted, ref} from "vue"
 
-const commandsData = ref([])
+const commandsData = ref({})
 let showForm = ref(false)
 let commandNumber = ref(1)
 let command = ref({
   number: '',
   command_type: '',
+  command_value: '',
   transition: '',
   comment: ''
 })
@@ -25,39 +26,46 @@ const commandsType = [
     value: 'delete', name: 'X (удалить метку)'
   },
   {
-    value: 'transition', name: '? (переход)'
+    value: 'condition', name: '? (переход)'
   },
   {
     value: 'end', name: '! (конец)'
   }
 ]
 
-defineProps({
-  msg: {
-    type: String,
-    required: true,
-  },
-})
+let inputStyle = `
+width: 50px;
+height: 50px;
+background-color: #2c3e50;
+color: white;
+border-radius: 6px;
+padding-right: 5px;
+padding-left: 20px;
+font-size: 20px;`
+let inputStyleСarriage = `
+width: 50px;
+height: 50px;
+background-color: red;
+color: white;
+border-radius: 6px;
+padding-right: 5px;
+padding-left: 20px;
+font-size: 20px;`
 
 onMounted(() => {
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 21; i++) {
     let mainBody = document.querySelector('.main-tape')
     let inputField = document.createElement('input')
     inputField.setAttribute('type', 'text')
     inputField.setAttribute('maxlength', '1')
+    inputField.setAttribute('data-index', i);
     inputField.className = 'main-tape__input'
-    inputField.style.cssText = `
-      width: 50px;
-      height: 50px;
-      background-color: #2c3e50;
-      color: white;
-      border-radius: 6px;
-      padding-right: 5px;
-      padding-left: 20px;
-      font-size: 20px;
-    `
+    inputField.style.cssText = inputStyle
     mainBody.append(inputField)
   }
+  let carriage = document.querySelector(`.main-tape__input[data-index="${9}"]`)
+  carriage.classList.add('carriage')
+  carriage.style.cssText = inputStyleСarriage
 })
 
 function createCommand() {
@@ -66,15 +74,75 @@ function createCommand() {
   for (let elem of commandsType) {
     if (elem.value === command.value.command_type) {
       newCommand.command_type = elem.name
+      newCommand.command_value = elem.value
     }
   }
-  commandsData.value.push(newCommand)
+  commandsData.value[command.value.number] = newCommand
   commandNumber.value += 1
   command.value = {
     number: '',
     command_type: '',
     transition: '',
     comment: ''
+  }
+}
+
+function changeCarriage(indexBlock, pastBlock) {
+  pastBlock.classList.remove('carriage')
+  pastBlock.style.cssText = inputStyle
+  let carriageNext = document.querySelector(`.main-tape__input[data-index="${indexBlock}"]`)
+  carriageNext.classList.add('carriage')
+  carriageNext.style.cssText = inputStyleСarriage
+}
+function rightStep(curStep, curBlock, indexBlock) {
+  changeCarriage(Number(indexBlock) + 1, curBlock)
+  return curStep.transition
+}
+
+function leftStep(curStep, curBlock, indexBlock) {
+  changeCarriage(Number(indexBlock) - 1, curBlock)
+  return curStep.transition
+}
+
+function labelStep() {
+  return 1
+}
+function deleteStep() {
+  return 1
+}
+function conditionStep() {
+  return 1
+}
+function endStep() {
+  return 1
+}
+
+function startMachine() {
+  let flag = true
+  let currentBlock = ''
+  let blockIndex = 0
+  let currentStep = 1
+  let currentCommand = commandsData.value[currentStep]
+  let commandType = currentCommand.command_value
+  while (flag) {
+    currentBlock = document.querySelector(`.carriage`)
+    blockIndex = currentBlock.dataset.index
+    if (commandType === 'right') {
+      currentStep = rightStep(currentCommand, currentBlock, blockIndex)
+    } else if (commandType === 'left') {
+      currentStep = leftStep(currentCommand, currentBlock, blockIndex)
+    } else if (commandType === 'label') {
+      currentStep = labelStep()
+    } else if (commandType === 'delete') {
+      currentStep = deleteStep()
+    } else if (commandType === 'condition') {
+      currentStep = conditionStep()
+    } else if (commandType === 'end') {
+      flag = false
+    } else {
+      flag = false
+    }
+    flag = false
   }
 }
 
@@ -101,7 +169,7 @@ function createCommand() {
             <v-btn variant="outlined"
               class="main-commands__btn"
               text="Старт"
-              @click="showForm=true"
+              @click="startMachine"
             ></v-btn>
           </div>
         </template>
