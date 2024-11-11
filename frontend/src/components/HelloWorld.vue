@@ -88,6 +88,16 @@ function createCommand() {
   }
 }
 
+function deleteCommand(number) {
+  delete commandsData.value[number]
+  for (const key in commandsData.value) {
+  if (parseInt(key) > parseInt(number)) {
+   commandsData.value[parseInt(key) - 1] = commandsData.value[key]
+   delete commandsData.value[key]
+  }
+ }
+}
+
 function changeCarriage(indexBlock, pastBlock) {
   pastBlock.classList.remove('carriage')
   pastBlock.style.cssText = inputStyle
@@ -241,6 +251,7 @@ function refresh() {
             <th class="text-left">Команда</th>
             <th class="text-left">Переход</th>
             <th class="text-left">Комментарий</th>
+            <th class="text-left">Действие</th>
           </tr>
         </thead>
         <tbody class="main-commands__table__body">
@@ -252,6 +263,12 @@ function refresh() {
             <td>{{ item.command_type }}</td>
             <td>{{ item.transition }}</td>
             <td>{{ item.comment }}</td>
+            <td>
+              <v-btn variant="outlined"
+                   text="Удалить"
+                   @click="deleteCommand(item.number)"
+              ></v-btn>
+            </td>
           </tr>
         </tbody>
       </v-table>
