@@ -87,6 +87,7 @@ function createCommand() {
     comment: ''
   }
 }
+//что-то
 
 function deleteCommand(number) {
   delete commandsData.value[number]
