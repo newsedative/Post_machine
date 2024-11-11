@@ -159,6 +159,10 @@ async function startMachine() {
   }
 }
 
+function refresh() {
+  location.reload()
+}
+
 </script>
 
 <template>
@@ -186,6 +190,11 @@ async function startMachine() {
               class="main-commands__btn"
               text="Старт"
               @click="startMachine"
+            ></v-btn>
+            <v-btn variant="outlined"
+              class="main-commands__btn"
+              text="Удалить"
+              @click="refresh"
             ></v-btn>
           </div>
         </template>
