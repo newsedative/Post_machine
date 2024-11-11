@@ -123,9 +123,6 @@ function conditionStep(curStep, curBlock) {
     return firstNumber
   }
 }
-function endStep() {
-  return 1
-}
 
 async function startMachine() {
   let flag = true
